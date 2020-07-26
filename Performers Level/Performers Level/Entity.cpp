@@ -75,6 +75,7 @@ void Entity::Update(float deltaTime, Entity* player, Entity *objects, int object
 		position.y += velocity.y * deltaTime; // Move on Y
 		CheckCollisionsY(map);// Fix if needed
 		position.x += velocity.x * deltaTime;
+		CheckCollisionsX(map);// Fix if needed
 	}
 
 
@@ -98,6 +99,7 @@ void Entity::Update(float deltaTime, Entity* player, Entity *objects, int object
 
 
 	if (entityType == EntityType::PLAYER) {
+		lastCollided = EntityType::PLAYER;
 		velocity.x = movement.x * speed;
 		velocity += acceleration * deltaTime;
 
@@ -105,6 +107,9 @@ void Entity::Update(float deltaTime, Entity* player, Entity *objects, int object
 		CheckCollisionsY(map);
 		if (objects != NULL) {
 			CheckCollisionsY(objects, objectCount);
+		}
+		if (position.y <= -10.0f) {
+			gameEnd = true;
 		}
 		if (lastCollided == EntityType::ENEMY) {
 			if (collidedBottom == true) {
@@ -114,7 +119,6 @@ void Entity::Update(float deltaTime, Entity* player, Entity *objects, int object
 					}
 				}
 				if (enemyLeft <= 0) {
-					gameEnd = true;
 					win = true;
 				}
 				else {
@@ -129,10 +133,9 @@ void Entity::Update(float deltaTime, Entity* player, Entity *objects, int object
 			CheckCollisionsX(objects, objectCount);
 		}
 
-		if (lastCollided == EntityType::ENEMY) {
+		if (lastCollided == EntityType::ENEMY ) {
 			if (collidedLeft == true || collidedRight == true) {
 				gameEnd = true;
-				win = false;
 			}
 		}
 		if (jump == true) {

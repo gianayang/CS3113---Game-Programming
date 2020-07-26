@@ -57,7 +57,7 @@ public:
 
 	bool gameEnd = false;
 	bool win = false;
-	int enemyLeft = 3;
+	int enemyLeft;
 
 	bool isActive = true;
 
@@ -65,7 +65,8 @@ public:
 	bool collidedBottom = false;
 	bool collidedLeft = false;
 	bool collidedRight = false;
-
+	
+	int level;
 	Entity();
 	bool CheckCollision(Entity* other);
 	void CheckCollisionsY(Entity* objects, int objectCount);

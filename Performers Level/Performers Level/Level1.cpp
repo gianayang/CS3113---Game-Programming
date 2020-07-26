@@ -16,7 +16,7 @@ unsigned int level1_data[] =
 };
 
 Mix_Music* music;
-GLuint fontTextureID;
+
 void Level1::Initialize() {
 
     state.nextScene = -1;
@@ -29,8 +29,6 @@ void Level1::Initialize() {
     music = Mix_LoadMUS("dooblydoo.mp3");
     Mix_PlayMusic(music, -1);
     Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
-   
-    fontTextureID = Util::LoadTexture("font.png");
 
     state.player = new Entity();
     state.player->position = glm::vec3(5, 0, 0);
@@ -57,21 +55,9 @@ void Level1::Initialize() {
     state.enemies = new Entity[LEVEL1_ENEMY_COUNT];
 
     GLuint enemyTextureID = Util::LoadTexture("cat.png");
-    /*
+
     state.enemies[0].textureID = enemyTextureID;
-    state.enemies[0].position = glm::vec3(4.0f, 0.0f, 0.0f);
-    state.enemies[0].movement = glm::vec3(0, 0, 0);
-    state.enemies[0].entityType = EntityType::ENEMY;
-    state.enemies[0].aiType = AIType::WALKER;
-    state.enemies[0].aiState = AISTATE::WALKING;
-    state.enemies[0].speed = 2.0f;
-    state.enemies[0].acceleration = glm::vec3(0, -9.81f, 0);
-    state.enemies[0].width = 0.6;
-    state.enemies[0].height = 0.8;
-*/
-    
-    state.enemies[0].textureID = enemyTextureID;
-    state.enemies[0].position = glm::vec3(2.0f, 5.0f, 0.0f);
+    state.enemies[0].position = glm::vec3(3.0f, 5.0f, 0.0f);
     state.enemies[0].movement = glm::vec3(0, 0, 0);
     state.enemies[0].entityType = EntityType::ENEMY;
     state.enemies[0].aiType = AIType::WAITANDGO;
@@ -80,18 +66,10 @@ void Level1::Initialize() {
     state.enemies[0].speed = 2.0;
     state.enemies[0].width = 0.6;
     state.enemies[0].height = 0.8;
-    /*
-    state.enemies[2].textureID = enemyTextureID;
-    state.enemies[2].position = glm::vec3(4.0f, 1.0f, 0.0f);
-    state.enemies[2].movement = glm::vec3(1, 1, 0);
-    state.enemies[2].entityType = EntityType::ENEMY;
-    state.enemies[2].aiType = AIType::WALKER;
-    state.enemies[2].aiState = AISTATE::ATTACKING;
-    state.enemies[2].speed = 1;
-    state.enemies[2].acceleration.y = -1;
-    state.enemies[2].width = 0.6;
-    state.enemies[2].height = 0.8;
-    */
+
+    state.player->enemyLeft = 1;
+    state.player->level = 1;
+
 }
 void Level1::Update(float deltaTime) {
 	state.player->Update(deltaTime, state.player, state.enemies, LEVEL1_ENEMY_COUNT, state.map);

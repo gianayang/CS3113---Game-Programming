@@ -1,36 +1,36 @@
-#include "Level2.h"
-#define LEVEL2_WIDTH 14
-#define LEVEL2_HEIGHT 8
-#define LEVEL2_ENEMY_COUNT 2
+#include "Level3.h"
+#define LEVEL3_WIDTH 14
+#define LEVEL3_HEIGHT 8
+#define LEVEL3_ENEMY_COUNT 3
 
-unsigned int level2_data[] =
+unsigned int level3_data[] =
 {
  3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
  3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
  3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
  3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
  3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
- 3, 1, 1, 1, 1, 1, 1, 0, 1, 2, 2, 2, 2, 2,
+ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+ 3, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 2, 2, 2,
  3, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2
 };
 
-Mix_Music* music_level2;
-Mix_Chunk* bounce_level2;
+Mix_Music* music_level3;
+Mix_Chunk* bounce_level3;
 
-void Level2::Initialize() {
+void Level3::Initialize() {
     state.nextScene = -1;
     GLuint mapTextureID = Util::LoadTexture("tileset.png");
-    state.map = new Map(LEVEL2_WIDTH, LEVEL2_HEIGHT, level2_data, mapTextureID, 1.0f, 4, 1);
+    state.map = new Map(LEVEL3_WIDTH, LEVEL3_HEIGHT, level3_data, mapTextureID, 1.0f, 4, 1);
     // Move over all of the player and enemy code from initialization.
 
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
-    music_level2 = Mix_LoadMUS("dooblydoo.mp3");
-    Mix_PlayMusic(music_level2, -1);
+    music_level3 = Mix_LoadMUS("dooblydoo.mp3");
+    Mix_PlayMusic(music_level3, -1);
     Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
-    Mix_Volume(-1,MIX_MAX_VOLUME / 4);
+    Mix_Volume(-1, MIX_MAX_VOLUME / 4);
 
-    bounce_level2 = Mix_LoadWAV("bounce.wav");
+    bounce_level3 = Mix_LoadWAV("bounce.wav");
 
     state.player = new Entity();
     state.player->position = glm::vec3(5, 0, 0);
@@ -53,10 +53,10 @@ void Level2::Initialize() {
     state.player->animFrames = 4;
     state.player->animIndex = 0;
     state.player->animTime = 0;
-    state.enemies = new Entity[LEVEL2_ENEMY_COUNT];
+    state.enemies = new Entity[LEVEL3_ENEMY_COUNT];
 
     GLuint enemyTextureID = Util::LoadTexture("cat.png");
-    
+
     state.enemies[0].textureID = enemyTextureID;
     state.enemies[0].position = glm::vec3(11.0f, 5.0f, 0.0f);
     state.enemies[0].movement = glm::vec3(0, 0, 0);
@@ -69,7 +69,7 @@ void Level2::Initialize() {
     state.enemies[0].height = 0.8;
 
     state.enemies[1].textureID = enemyTextureID;
-    state.enemies[1].position = glm::vec3(2.0,5.0,0);
+    state.enemies[1].position = glm::vec3(2.0, 5.0, 0);
     state.enemies[1].movement = glm::vec3(0, 0, 0);
     state.enemies[1].entityType = EntityType::ENEMY;
     state.enemies[1].aiType = AIType::WAITANDGO;
@@ -78,23 +78,31 @@ void Level2::Initialize() {
     state.enemies[1].speed = 2.0;
     state.enemies[1].width = 0.6;
     state.enemies[1].height = 0.8;
+   
+    state.enemies[2].textureID = enemyTextureID;
+    state.enemies[2].position = glm::vec3(4.0f, 1.0f, 0.0f);
+    state.enemies[2].movement = glm::vec3(1, 1, 0);
+    state.enemies[2].entityType = EntityType::ENEMY;
+    state.enemies[2].aiType = AIType::WALKER;
+    state.enemies[2].aiState = AISTATE::WALKING;
+    state.enemies[2].speed = 2.0f;
+    state.enemies[2].acceleration = glm::vec3(0, -9.81f, 0);
+    state.enemies[2].width = 0.6;
+    state.enemies[2].height = 0.8;
 
-    state.player->enemyLeft = 2;
-    state.player->level = 2;
+    state.player->enemyLeft = 3;
+    state.player->level = 3;
 }
-void Level2::Update(float deltaTime) {
-    state.player->Update(deltaTime, state.player, state.enemies, LEVEL2_ENEMY_COUNT, state.map);
-    if (state.player->position.x >= 12) {
-        state.nextScene = 3;
-    }
-    for (int i = 0; i < LEVEL2_ENEMY_COUNT; i++) {
-        state.enemies[i].Update(deltaTime, state.player, state.enemies, LEVEL2_ENEMY_COUNT, state.map);
+void Level3::Update(float deltaTime) {
+    state.player->Update(deltaTime, state.player, state.enemies, LEVEL3_ENEMY_COUNT, state.map);
+    for (int i = 0; i < LEVEL3_ENEMY_COUNT; i++) {
+        state.enemies[i].Update(deltaTime, state.player, state.enemies, LEVEL3_ENEMY_COUNT, state.map);
     }
 }
-void Level2::Render(ShaderProgram* program) {
+void Level3::Render(ShaderProgram* program) {
     state.map->Render(program);
     state.player->Render(program);
-    for (int i = 0; i < LEVEL2_ENEMY_COUNT; i++) {
+    for (int i = 0; i < LEVEL3_ENEMY_COUNT; i++) {
         state.enemies[i].Render(program);
     }
 }

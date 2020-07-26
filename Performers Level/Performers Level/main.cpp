@@ -5,7 +5,7 @@
 #endif
 
 #define GL_GLEXT_PROTOTYPES 1
-
+#define LEVEL_LENGTH 4
 
 #include <SDL.h>
 #include <SDL_opengl.h>
@@ -22,6 +22,7 @@
 #include "Scene.h"
 #include "Level1.h"
 #include "Level2.h"
+#include "Level3.h"
 #include "StartPage.h"
 
 #include "Effects.h"
@@ -39,7 +40,7 @@ GLuint playerTextureID;
 GLuint fontTextureID_main;
 
 Scene* currentScene;
-Scene* sceneList[3];
+Scene* sceneList[4];
 
 Effects* effects;
 
@@ -90,6 +91,7 @@ void Initialize() {
     sceneList[0] = new StartPage();
     sceneList[1] = new Level1();
     sceneList[2] = new Level2();
+    sceneList[3] = new Level3();
     SwitchToScene(sceneList[0]);
 
     effects = new Effects(projectionMatrix, viewMatrix);
@@ -161,23 +163,12 @@ void ProcessInput() {
 
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
-                case SDLK_LEFT:
-                    // Move the player left
-                    break;
-
-                case SDLK_RIGHT:
-                    // Move the player right
-                    break;
-
-                case SDLK_SPACE:
-                    // Some sort of action
-                    break;
+                    case SDLK_RETURN:
+                        gameStart = true;
+                        currentScene->state.nextScene = 1;
+                        break; // SDL_KEYDOWN
                 }
-                case SDLK_RETURN:
-                    gameStart = true;
-                    currentScene->state.nextScene = 1;
-                    break; // SDL_KEYDOWN
-                }
+            }
         }
     }
     
@@ -208,7 +199,9 @@ void Update() {
             program.SetLightPosition(currentScene->state.player->position);
 
             if (lastCollidedBottom == false && currentScene->state.player->collidedBottom) {
-                //effects->Start(EffectType::SHAKE, 2.0f);
+                if (currentScene->state.player->lastCollided == EntityType::ENEMY) {
+                    effects->Start(EffectType::SHAKE, 2.0f);
+                }
                 lastCollidedBottom = true;
             }
             lastCollidedBottom = currentScene->state.player->collidedBottom;
@@ -245,15 +238,15 @@ void Render() {
     else {
         currentScene->Render(&program);
         Util::DrawText(&programUI, fontTextureID_main, "lives left: " + std::to_string(currentScene->state.player->lives), 0.2f, 0.01f, glm::vec3(2.0f, 3.50f, 0));
-        if (currentScene->state.player->gameEnd) {
-            if (currentScene->state.player->win) {
-                Util::DrawText(&programUI, fontTextureID_main, "You Win", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
-            }
-            else {
-                Util::DrawText(&programUI, fontTextureID_main, "You Lost", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
-            }
+        if (currentScene->state.player->lives <= 0) {
+           Util::DrawText(&programUI, fontTextureID_main, "You Lost", 0.7f, 0.01f, glm::vec3(-2.5f, 2.0f, 0));
         }
-
+        if (currentScene->state.player->win == true && currentScene->state.player->level == LEVEL_LENGTH - 1) {
+            Util::DrawText(&programUI, fontTextureID_main, "You Win", 0.7f, 0.01f, glm::vec3(-2.5f, 2.0f, 0));
+        }
+        else {
+            currentScene->state.player->gameEnd = false;
+        }
         effects->Render();
     }
     SDL_GL_SwapWindow(displayWindow);
@@ -270,10 +263,18 @@ int main(int argc, char* argv[]) {
         ProcessInput();
         if (!currentScene->state.player->gameEnd) {
             Update();
+            int tempLives = currentScene->state.player->lives;
             if (currentScene->state.nextScene >= 0) {
-                //effects->Start(EffectType::FADEOUT,0.2f);
+                effects->Start(EffectType::FADEOUT,0.2f);
                 SwitchToScene(sceneList[currentScene->state.nextScene]);
-                //effects->Start(EffectType::FADEIN,0.2f);
+                currentScene->state.player->lives = tempLives;
+                effects->Start(EffectType::FADEIN,0.2f);
+            }
+            if (currentScene->state.player->gameEnd) {
+                sceneList[1] = new Level1();
+                SwitchToScene(sceneList[1]);
+                tempLives--;
+                currentScene->state.player->lives = tempLives;
             }
         }
         Render();
