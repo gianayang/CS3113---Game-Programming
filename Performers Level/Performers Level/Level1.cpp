@@ -16,7 +16,7 @@ unsigned int level1_data[] =
 };
 
 Mix_Music* music;
-
+GLuint fontTextureID;
 void Level1::Initialize() {
 
     state.nextScene = -1;
@@ -30,6 +30,7 @@ void Level1::Initialize() {
     Mix_PlayMusic(music, -1);
     Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
    
+    fontTextureID = Util::LoadTexture("font.png");
 
     state.player = new Entity();
     state.player->position = glm::vec3(5, 0, 0);
@@ -56,6 +57,7 @@ void Level1::Initialize() {
     state.enemies = new Entity[LEVEL1_ENEMY_COUNT];
 
     GLuint enemyTextureID = Util::LoadTexture("cat.png");
+    /*
     state.enemies[0].textureID = enemyTextureID;
     state.enemies[0].position = glm::vec3(4.0f, 0.0f, 0.0f);
     state.enemies[0].movement = glm::vec3(0, 0, 0);
@@ -66,17 +68,19 @@ void Level1::Initialize() {
     state.enemies[0].acceleration = glm::vec3(0, -9.81f, 0);
     state.enemies[0].width = 0.6;
     state.enemies[0].height = 0.8;
+*/
+    
+    state.enemies[0].textureID = enemyTextureID;
+    state.enemies[0].position = glm::vec3(2.0f, 5.0f, 0.0f);
+    state.enemies[0].movement = glm::vec3(0, 0, 0);
+    state.enemies[0].entityType = EntityType::ENEMY;
+    state.enemies[0].aiType = AIType::WAITANDGO;
+    state.enemies[0].aiState = AISTATE::IDLE;
+    state.enemies[0].acceleration = glm::vec3(0, -9.81f, 0);
+    state.enemies[0].speed = 2.0;
+    state.enemies[0].width = 0.6;
+    state.enemies[0].height = 0.8;
     /*
-    state.enemies[1].textureID = enemyTextureID;
-    state.enemies[1].position = glm::vec3(2.0f, -2.25f, 0.0f);
-    state.enemies[1].movement = glm::vec3(0, 0, 0);
-    state.enemies[1].entityType = EntityType::ENEMY;
-    state.enemies[1].aiType = AIType::WAITANDGO;
-    state.enemies[1].aiState = AISTATE::IDLE;
-    state.enemies[1].speed = 1;
-    state.enemies[1].width = 0.6;
-    state.enemies[1].height = 0.8;
-
     state.enemies[2].textureID = enemyTextureID;
     state.enemies[2].position = glm::vec3(4.0f, 1.0f, 0.0f);
     state.enemies[2].movement = glm::vec3(1, 1, 0);
@@ -99,10 +103,10 @@ void Level1::Update(float deltaTime) {
     }
 }
 void Level1::Render(ShaderProgram* program) {
+    Util::DrawText(program, fontTextureID, "lives left: " + state.player->lives, 0.5f, 0.01f, glm::vec3(-3.0f, 2.0f, 0));
 	state.map->Render(program);
 	state.player->Render(program);
     for (int i = 0; i < LEVEL1_ENEMY_COUNT; i++) {
         state.enemies[i].Render(program);
     }
-    
 }

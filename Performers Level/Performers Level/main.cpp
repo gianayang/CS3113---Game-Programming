@@ -33,7 +33,8 @@ bool gameIsRunning = true;
 ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
 GLuint playerTextureID;
-GLuint fontTextureID;
+
+GLuint fontTextureID_main;
 
 Scene* currentScene;
 Scene* sceneList[3];
@@ -74,7 +75,7 @@ void Initialize() {
     // Good setting for transparency
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    fontTextureID = Util::LoadTexture("font.png");
+    fontTextureID_main = Util::LoadTexture("font.png");
 
     // Clear stuff out of initialize and add this to the bottom:
     sceneList[0] = new StartPage();
@@ -227,20 +228,21 @@ void Render() {
 
     glUseProgram(program.programID);
     if (gameStart == false) {
-        Util::DrawText(&program, fontTextureID, "Adventure of G", 0.4f, 0.01f, glm::vec3(-2.5f, 2.5f, 0));
-        Util::DrawText(&program, fontTextureID, "Press Enter to Play!", 0.4f, 0.01f, glm::vec3(-3.5f, 1.0f, 0));
+        Util::DrawText(&program, fontTextureID_main, "Adventure of G", 0.4f, 0.01f, glm::vec3(-2.5f, 2.5f, 0));
+        Util::DrawText(&program, fontTextureID_main, "Press Enter to Play!", 0.4f, 0.01f, glm::vec3(-3.5f, 1.0f, 0));
     }
     else {
         currentScene->Render(&program);
-
+        
         if (currentScene->state.player->gameEnd) {
             if (currentScene->state.player->win) {
-                Util::DrawText(&program, fontTextureID, "You Win", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
+                Util::DrawText(&program, fontTextureID_main, "You Win", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
             }
             else {
-                Util::DrawText(&program, fontTextureID, "You Lost", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
+                Util::DrawText(&program, fontTextureID_main, "You Lost", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
             }
         }
+
         effects->Render();
     }
     SDL_GL_SwapWindow(displayWindow);

@@ -24,6 +24,8 @@ public:
 	AIType aiType;
 	AISTATE aiState;
 
+	int lives = 3;
+	
 	glm::vec3 position;
 	glm::vec3 movement;
 	glm::vec3 velocity;

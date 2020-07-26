@@ -106,6 +106,22 @@ void Entity::Update(float deltaTime, Entity* player, Entity *objects, int object
 		if (objects != NULL) {
 			CheckCollisionsY(objects, objectCount);
 		}
+		if (lastCollided == EntityType::ENEMY) {
+			if (collidedBottom == true) {
+				for (int i = 0; i < objectCount; i++) {
+					if (!objects[i].isActive) {
+						enemyLeft--;
+					}
+				}
+				if (enemyLeft <= 0) {
+					gameEnd = true;
+					win = true;
+				}
+				else {
+					enemyLeft = objectCount;
+				}
+			}
+		}
 
 		position.x += velocity.x * deltaTime; // Move on X
 		CheckCollisionsX(map);
