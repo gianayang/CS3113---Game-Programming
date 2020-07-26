@@ -75,4 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\effects_textured.glsl" />
+    <None Include="shaders\vertex_lit.glsl" />
+    <None Include="shaders\fragment_lit.glsl" />
+  </ItemGroup>
 </Project>

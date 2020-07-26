@@ -31,7 +31,9 @@ Mix_Chunk* bounce;
 SDL_Window* displayWindow;
 bool gameIsRunning = true;
 ShaderProgram program;
+ShaderProgram programUI;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
+glm::mat4 viewMatrix1, modelMatrix1, projectionMatrix1;
 GLuint playerTextureID;
 
 GLuint fontTextureID_main;
@@ -59,15 +61,22 @@ void Initialize() {
 
     glViewport(0, 0, 640, 480);
 
-    program.Load("shaders/vertex_textured.glsl", "shaders/fragment_textured.glsl");
+    program.Load("shaders/vertex_lit.glsl", "shaders/fragment_lit.glsl");
+    programUI.Load("shaders/vertex_textured.glsl", "shaders/fragment_textured.glsl");
 
     viewMatrix = glm::mat4(1.0f);
     modelMatrix = glm::mat4(1.0f);
     projectionMatrix = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
 
+    viewMatrix1 = glm::mat4(1.0f);
+    modelMatrix1= glm::mat4(1.0f);
+    projectionMatrix1 = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
+
     program.SetProjectionMatrix(projectionMatrix);
     program.SetViewMatrix(viewMatrix);
 
+    programUI.SetProjectionMatrix(projectionMatrix1);
+    programUI.SetViewMatrix(viewMatrix1);
     glUseProgram(program.programID);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -84,7 +93,7 @@ void Initialize() {
     SwitchToScene(sceneList[0]);
 
     effects = new Effects(projectionMatrix, viewMatrix);
-    effects->Start(EffectType::FADEIN,0.5f);
+   // effects->Start(EffectType::FADEIN,0.5f);
 
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
     Mix_Volume(-1, MIX_MAX_VOLUME / 4);
@@ -196,8 +205,10 @@ void Update() {
             // Update. Notice it's FIXED_TIMESTEP. Not deltaTime
             currentScene->Update(FIXED_TIMESTEP);
 
+            program.SetLightPosition(currentScene->state.player->position);
+
             if (lastCollidedBottom == false && currentScene->state.player->collidedBottom) {
-                effects->Start(EffectType::SHAKE, 2.0f);
+                //effects->Start(EffectType::SHAKE, 2.0f);
                 lastCollidedBottom = true;
             }
             lastCollidedBottom = currentScene->state.player->collidedBottom;
@@ -226,20 +237,20 @@ void Render() {
     
     program.SetViewMatrix(viewMatrix);
 
-    glUseProgram(program.programID);
+    glUseProgram(programUI.programID);
     if (gameStart == false) {
-        Util::DrawText(&program, fontTextureID_main, "Adventure of G", 0.4f, 0.01f, glm::vec3(-2.5f, 2.5f, 0));
-        Util::DrawText(&program, fontTextureID_main, "Press Enter to Play!", 0.4f, 0.01f, glm::vec3(-3.5f, 1.0f, 0));
+        Util::DrawText(&programUI, fontTextureID_main, "Adventure of G", 0.4f, 0.01f, glm::vec3(-2.5f, 2.5f, 0));
+        Util::DrawText(&programUI, fontTextureID_main, "Press Enter to Play!", 0.4f, 0.01f, glm::vec3(-3.5f, 1.0f, 0));
     }
     else {
         currentScene->Render(&program);
-        
+        Util::DrawText(&programUI, fontTextureID_main, "lives left: " + std::to_string(currentScene->state.player->lives), 0.2f, 0.01f, glm::vec3(2.0f, 3.50f, 0));
         if (currentScene->state.player->gameEnd) {
             if (currentScene->state.player->win) {
-                Util::DrawText(&program, fontTextureID_main, "You Win", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
+                Util::DrawText(&programUI, fontTextureID_main, "You Win", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
             }
             else {
-                Util::DrawText(&program, fontTextureID_main, "You Lost", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
+                Util::DrawText(&programUI, fontTextureID_main, "You Lost", 0.5f, 0.01f, glm::vec3(-4.5f, 1.0f, 0));
             }
         }
 
@@ -260,9 +271,9 @@ int main(int argc, char* argv[]) {
         if (!currentScene->state.player->gameEnd) {
             Update();
             if (currentScene->state.nextScene >= 0) {
-                effects->Start(EffectType::FADEOUT,0.2f);
+                //effects->Start(EffectType::FADEOUT,0.2f);
                 SwitchToScene(sceneList[currentScene->state.nextScene]);
-                effects->Start(EffectType::FADEIN,0.2f);
+                //effects->Start(EffectType::FADEIN,0.2f);
             }
         }
         Render();

@@ -103,7 +103,6 @@ void Level1::Update(float deltaTime) {
     }
 }
 void Level1::Render(ShaderProgram* program) {
-    Util::DrawText(program, fontTextureID, "lives left: " + state.player->lives, 0.5f, 0.01f, glm::vec3(-3.0f, 2.0f, 0));
 	state.map->Render(program);
 	state.player->Render(program);
     for (int i = 0; i < LEVEL1_ENEMY_COUNT; i++) {
