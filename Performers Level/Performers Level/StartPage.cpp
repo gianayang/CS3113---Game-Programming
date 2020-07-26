@@ -1,7 +1,7 @@
 #include "StartPage.h"
 #define StartPage_WIDTH 14
 #define StartPage_HEIGHT 8
-#define StartPage_ENEMY_COUNT 1
+#define StartPage_ENEMY_COUNT 0
 
 
 void StartPage::Initialize() {
@@ -29,20 +29,6 @@ void StartPage::Initialize() {
     state.player->animFrames = 4;
     state.player->animIndex = 0;
     state.player->animTime = 0;
-
-
-    state.enemies = new Entity[StartPage_ENEMY_COUNT];
-
-    GLuint enemyTextureID = Util::LoadTexture("cat.png");
-    state.enemies[0].textureID = enemyTextureID;
-    state.enemies[0].position = glm::vec3(0.0f, 0.0f, 0.0f);
-    state.enemies[0].movement = glm::vec3(0, 0, 0);
-    state.enemies[0].entityType = EntityType::ENEMY;
-    state.enemies[0].aiType = AIType::WALKER;
-    state.enemies[0].aiState = AISTATE::WALKING;
-    state.enemies[0].speed = 1;
-    state.enemies[0].width = 0.6;
-    state.enemies[0].height = 0.8;
 }
 void StartPage::Update(float deltaTime) {
    

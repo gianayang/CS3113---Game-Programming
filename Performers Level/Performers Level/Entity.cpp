@@ -73,6 +73,7 @@ void Entity::Update(float deltaTime, Entity* player, Entity *objects, int object
 		velocity.x = movement.x * speed;
 		velocity += acceleration * deltaTime;
 		position.y += velocity.y * deltaTime; // Move on Y
+		CheckCollisionsY(map);// Fix if needed
 		position.x += velocity.x * deltaTime;
 	}
 
@@ -102,11 +103,15 @@ void Entity::Update(float deltaTime, Entity* player, Entity *objects, int object
 
 		position.y += velocity.y * deltaTime; // Move on Y
 		CheckCollisionsY(map);
-		//CheckCollisionsY(objects, objectCount);
+		if (objects != NULL) {
+			CheckCollisionsY(objects, objectCount);
+		}
 
 		position.x += velocity.x * deltaTime; // Move on X
 		CheckCollisionsX(map);
-		CheckCollisionsX(objects, objectCount); // Fix if needed
+		if (objects != NULL) {
+			CheckCollisionsX(objects, objectCount);
+		}
 
 		if (lastCollided == EntityType::ENEMY) {
 			if (collidedLeft == true || collidedRight == true) {
@@ -124,7 +129,10 @@ void Entity::Update(float deltaTime, Entity* player, Entity *objects, int object
 }
 
 bool Entity::CheckCollision(Entity* other) {
-	if (isActive == false || other->isActive == false) {
+ 	if (isActive == false ) {
+		return false;
+	}
+	if (other->entityType == EntityType::ENEMY && other->isActive == false) {
 		return false;
 	}
 	float xdist = fabs(position.x - other->position.x) - ((width + other->width) / 2.0f);
@@ -139,9 +147,9 @@ void Entity::CheckCollisionsY(Entity* objects, int objectCount)
 	for (int i = 0; i < objectCount; i++)
 	{
 		Entity* object = &objects[i];
-		lastCollided = object->entityType;
 		if (CheckCollision(object))
 		{
+			lastCollided = object->entityType;
 			float ydist = fabs(position.y - object->position.y);
 			float penetrationY = fabs(ydist - (height / 2.0f) - (object->height / 2.0f));
 			if (velocity.y > 0) {
@@ -172,9 +180,9 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
 	for (int i = 0; i < objectCount; i++)
 	{
 		Entity* object = &objects[i];
-		lastCollided = object->entityType;
 		if (CheckCollision(object))
 		{
+			lastCollided = object->entityType;
 			float xdist = fabs(position.x - object->position.x);
 			float penetrationX = fabs(xdist - (width / 2.0f) - (object->width / 2.0f));
 			if (velocity.x > 0) {

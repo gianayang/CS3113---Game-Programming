@@ -57,12 +57,13 @@ void Level1::Initialize() {
 
     GLuint enemyTextureID = Util::LoadTexture("cat.png");
     state.enemies[0].textureID = enemyTextureID;
-    state.enemies[0].position = glm::vec3(0.0f, 0.0f, 0.0f);
+    state.enemies[0].position = glm::vec3(4.0f, 0.0f, 0.0f);
     state.enemies[0].movement = glm::vec3(0, 0, 0);
     state.enemies[0].entityType = EntityType::ENEMY;
     state.enemies[0].aiType = AIType::WALKER;
     state.enemies[0].aiState = AISTATE::WALKING;
-    state.enemies[0].speed = 1;
+    state.enemies[0].speed = 2.0f;
+    state.enemies[0].acceleration = glm::vec3(0, -9.81f, 0);
     state.enemies[0].width = 0.6;
     state.enemies[0].height = 0.8;
     /*

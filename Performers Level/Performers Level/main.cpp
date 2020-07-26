@@ -163,11 +163,11 @@ void ProcessInput() {
                     // Some sort of action
                     break;
                 }
-            case SDLK_RETURN:
-                gameStart = true;
-                currentScene->state.nextScene = 1;
-                break; // SDL_KEYDOWN
-            }
+                case SDLK_RETURN:
+                    gameStart = true;
+                    currentScene->state.nextScene = 1;
+                    break; // SDL_KEYDOWN
+                }
         }
     }
     
@@ -200,7 +200,6 @@ void Update() {
                 lastCollidedBottom = true;
             }
             lastCollidedBottom = currentScene->state.player->collidedBottom;
-
             effects->Update(FIXED_TIMESTEP);
 
             deltaTime -= FIXED_TIMESTEP;
@@ -232,8 +231,7 @@ void Render() {
         Util::DrawText(&program, fontTextureID, "Press Enter to Play!", 0.4f, 0.01f, glm::vec3(-3.5f, 1.0f, 0));
     }
     else {
-        currentScene->state.map->Render(&program);
-        currentScene->state.player->Render(&program);
+        currentScene->Render(&program);
 
         if (currentScene->state.player->gameEnd) {
             if (currentScene->state.player->win) {
