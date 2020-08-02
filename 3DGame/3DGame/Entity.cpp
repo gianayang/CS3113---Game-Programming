@@ -22,6 +22,9 @@ void Entity::Update(float deltaTime)
         rotation.z += 45 * deltaTime;
         rotation.y += 45 * deltaTime;
     }
+    else if (entityType == EntityType::ENEMY) {
+        rotation.y += 30 * deltaTime;
+    }
 
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, position);
