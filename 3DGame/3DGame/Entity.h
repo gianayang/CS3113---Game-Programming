@@ -14,7 +14,7 @@
 #include "ShaderProgram.h"
 #include "Mesh.h"
 
-enum class EntityType { PLAYER, PLATFORM, ENEMY,CUBE ,SHIP};
+enum class EntityType { PLAYER, PLATFORM, ENEMY,CUBE ,SHIP,FLOOR,CRATE};
 
 class Entity {
 public:
@@ -27,6 +27,10 @@ public:
     glm::vec3 scale;
 
     float speed;
+    bool billboard;
+    float width;
+    float height;
+    float depth;
 
     GLuint textureID;
     Mesh *mesh;
@@ -35,7 +39,9 @@ public:
 
     Entity();
 
-    void Update(float deltaTime);
+    bool CheckCollision(Entity* other);
+    void DrawBillboard(ShaderProgram* program);
+    void Update(float deltaTime, Entity* player, Entity* objects, int objectCount);
     void Render(ShaderProgram* program);
 };
 
