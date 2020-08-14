@@ -63,7 +63,8 @@ void Entity::Update(float deltaTime, Entity* player, Entity* objects, int object
         rotation.z += 45 * deltaTime;
         rotation.y += 45 * deltaTime;
     }
-    else if (entityType == EntityType::ENEMY) {
+    else if (entityType == EntityType::PLANET) {
+        rotation.z += 90 * deltaTime;
         rotation.y += 30 * deltaTime;
     }
 

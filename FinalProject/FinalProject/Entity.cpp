@@ -29,7 +29,7 @@ bool Entity::CheckCollision(Entity* other)
 }
 
 
-void Entity::Update(float deltaTime, Entity* player, Entity* objects, int objectCount)
+void Entity::Update(float deltaTime, Entity* player, Entity* objects, int objectCount, Entity* enemies, int enemyCount)
 {
     glm::vec3 previousPosition = position;
 
@@ -59,11 +59,17 @@ void Entity::Update(float deltaTime, Entity* player, Entity* objects, int object
     }
 
 
-    if (entityType == EntityType::CUBE) {
-        rotation.z += 45 * deltaTime;
-        rotation.y += 45 * deltaTime;
+    if (entityType == EntityType::BULLET && valid) {
+        for (int i = 0; i < enemyCount; i++) {
+            if (CheckCollision(&enemies[i])) {
+                enemies[i].valid = false;
+                valid = false;
+            }
+        }
     }
-    else if (entityType == EntityType::ENEMY) {
+
+    else if (entityType == EntityType::PLANET) {
+        rotation.z += 90 * deltaTime;
         rotation.y += 30 * deltaTime;
     }
 

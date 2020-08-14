@@ -27,7 +27,7 @@ GLuint fontTextureID;
 GLuint heartTextureID;
 
 
-#define OBJECT_COUNT 4
+#define OBJECT_COUNT 2
 #define ENEMY_COUNT 10
 
 struct GameState {
@@ -97,24 +97,24 @@ void Initialize() {
     state.objects[0].scale = glm::vec3(20, 0.5f, 20);
     state.objects[0].entityType = EntityType::FLOOR;
 
-    GLuint crateTextureID = Util::LoadTexture("crate1_diffuse.png");
-    Mesh* crateMesh = new Mesh();
-    crateMesh->LoadOBJ("cube.obj", 1);
+   // GLuint crateTextureID = Util::LoadTexture("crate1_diffuse.png");
+   // Mesh* crateMesh = new Mesh();
+    //crateMesh->LoadOBJ("cube.obj", 1);
 
-    state.objects[1].textureID = crateTextureID;
-    state.objects[1].mesh = crateMesh;
-    state.objects[1].position = glm::vec3(0, 0.5f, -3.0f);
-    state.objects[1].entityType = EntityType::CRATE;
+    //state.objects[1].textureID = crateTextureID;
+   // state.objects[1].mesh = crateMesh;
+    //state.objects[1].position = glm::vec3(0, 0.5f, -3.0f);
+    //state.objects[1].entityType = EntityType::CRATE;
 
-    state.objects[2].textureID = crateTextureID;
-    state.objects[2].mesh = crateMesh;
-    state.objects[2].position = glm::vec3(-1, 0.5f, -5.0f);
-    state.objects[2].entityType = EntityType::CRATE;
+    //state.objects[2].textureID = crateTextureID;
+    //state.objects[2].mesh = crateMesh;
+    //state.objects[2].position = glm::vec3(-1, 0.5f, -5.0f);
+    //state.objects[2].entityType = EntityType::CRATE;
 
-    state.objects[3].textureID = crateTextureID;
-    state.objects[3].mesh = crateMesh;
-    state.objects[3].position = glm::vec3(0, 1.5f, -5.0f);
-    state.objects[3].entityType = EntityType::CRATE;
+    //state.objects[3].textureID = crateTextureID;
+    //state.objects[3].mesh = crateMesh;
+    //state.objects[3].position = glm::vec3(0, 1.5f, -5.0f);
+    //state.objects[3].entityType = EntityType::CRATE;
 
     state.enemies = new Entity[ENEMY_COUNT];
     GLuint enemyTextureID = Util::LoadTexture("cat.png");
@@ -129,7 +129,7 @@ void Initialize() {
     /*
     GLuint shipTextureID = Util::LoadTexture("ship.png");
     Mesh* shipMesh = new Mesh();
-    shipMesh->LoadOBJ("ship.obj");
+    shipMesh->LoadOBJ("ship.obj",1);
     state.objects[0].textureID = shipTextureID;
     state.objects[0].mesh = shipMesh;
     state.objects[0].position = glm::vec3(0, 0, -5);
@@ -140,36 +140,38 @@ void Initialize() {
     GLuint cubeTextureID = Util::LoadTexture("crate1_diffuse.png");
 
     Mesh *cubeMesh = new Mesh();
-    cubeMesh->LoadOBJ("cube.obj");
+    cubeMesh->LoadOBJ("cube.obj",1);
 
 
     state.objects[0].textureID = cubeTextureID;
     state.objects[0].mesh = cubeMesh;
     state.objects[0].position = glm::vec3(0, 0, -5);
     state.objects[0].entityType = EntityType::CUBE;
-
-    GLuint marioTextureID = Util::LoadTexture("mario_body.png");
+    */
+    GLuint marioTextureID = Util::LoadTexture("textures.bmp");
 
     Mesh *marioMesh = new Mesh();
-    marioMesh->LoadOBJ("mario.obj");
+    marioMesh->LoadOBJ("pingu.obj",1);
 
 
     state.objects[1].textureID = marioTextureID;
     state.objects[1].mesh = marioMesh;
-    state.objects[1].position = glm::vec3(-10, -20, -80);
-    state.objects[1].scale = glm::vec3(0.25f, 0.25f, 0.25f);
-    state.objects[1].entityType = EntityType::ENEMY;
+    state.objects[1].position = state.player->position;
+    state.objects[1].rotation = glm::vec3(0, -90, 60);
+    state.objects[1].acceleration = glm::vec3(0, 0, -0.5);
+    state.objects[1].scale = glm::vec3(0.01f, 0.01f, 0.01f);
+    state.objects[1].entityType = EntityType::SHIP;
 
-    GLuint pikachuTextureID = Util::LoadTexture("pikachu.png");
-    Mesh* pikachuMesh = new Mesh();
-    pikachuMesh->LoadOBJ("pikachu.obj");
+    //GLuint pikachuTextureID = Util::LoadTexture("planet.jpg");
+    //Mesh* pikachuMesh = new Mesh();
+    //pikachuMesh->LoadOBJ("planet.obj",1);
 
 
-    state.objects[2].textureID = pikachuTextureID;
-    state.objects[2].mesh = pikachuMesh;
-    state.objects[2].position = glm::vec3(2, 0, -4);
-    state.objects[2].entityType = EntityType::ENEMY;
-    */
+    //state.objects[2].textureID = pikachuTextureID;
+    //state.objects[2].mesh = pikachuMesh;
+   // state.objects[2].position = glm::vec3(-10, -20, -80);
+   // state.objects[2].entityType = EntityType::ENEMY;
+    
 }
 
 
