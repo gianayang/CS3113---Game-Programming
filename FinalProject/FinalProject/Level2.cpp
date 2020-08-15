@@ -12,7 +12,7 @@ void Level2::Initialize() {
 
     state.player = new Entity();
     state.player->entityType = EntityType::PLAYER;
-    state.player->position = glm::vec3(0, 0.75f, 0);
+    state.player->position = glm::vec3(-50.0, -0.25f, -10.0);
     state.player->acceleration = glm::vec3(0, 0, 0);
     state.player->speed = 1.0f;
     state.player->velocity = glm::vec3(0, 0, 0);

@@ -1,6 +1,6 @@
 #include "Level1.h"
 #define OBJECT_COUNT 11
-#define ENEMY_COUNT 10
+#define ENEMY_COUNT 2
 
 Mix_Music* music;
 
