@@ -13,8 +13,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
 #include "Mesh.h"
+#include <SDL_mixer.h>
 
-enum class EntityType { PLAYER, PLATFORM, ENEMY, FLOOR, BULLET,PLANET};
+enum class EntityType { PLAYER, PLATFORM, ENEMY_Billboard, ENEMY, CRATE,FLOOR, BULLET,PLANET};
 
 class Entity {
 public:
@@ -37,9 +38,13 @@ public:
     bool win = false;
     bool valid = true;
     int lives = 3;
+    int enemyLeft;
+    int level;
 
     GLuint textureID;
     Mesh* mesh;
+    Mix_Chunk* attack;
+    Mix_Chunk* dead;
 
     glm::mat4 modelMatrix;
 

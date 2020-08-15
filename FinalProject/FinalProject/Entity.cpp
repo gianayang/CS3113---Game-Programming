@@ -16,6 +16,11 @@ Entity::Entity()
     width = 1.0f;
     height = 1.0f;
     depth = 1.0f;
+
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+    Mix_Volume(-1, MIX_MAX_VOLUME);
+    attack = Mix_LoadWAV("gun.wav");
+    dead = Mix_LoadWAV("Monster.wav");
 }
 
 bool Entity::CheckCollision(Entity* other)
@@ -37,9 +42,6 @@ void Entity::Update(float deltaTime, Entity* player, Entity* objects, int object
         float directionX = position.x - player->position.x;
         float directionZ = position.z - player->position.z;
         rotation.y = glm::degrees(atan2f(directionX, directionZ));
-
-        velocity.z = cos(glm::radians(rotation.y)) * -1.0f;
-        velocity.x = sin(glm::radians(rotation.y)) * -1.0f;
     }
 
     velocity += acceleration * deltaTime;
@@ -56,12 +58,28 @@ void Entity::Update(float deltaTime, Entity* player, Entity* objects, int object
                 break;
             }
         }
+        for (int i = 0; i < enemyCount; i++) {
+            if (enemies[i].valid && CheckCollision(&enemies[i])) {
+                Mix_PlayChannel(-1, dead, 0);
+                gameEnd = true;
+            }
+            if (enemies[i].valid == false) {
+                enemyLeft--;
+            }
+        }
+        if (enemyLeft <= 0) {
+            win = true;
+        }
+        else {
+            enemyLeft = enemyCount;
+        }
     }
 
 
     if (entityType == EntityType::BULLET && valid) {
         for (int i = 0; i < enemyCount; i++) {
             if (CheckCollision(&enemies[i])) {
+                Mix_PlayChannel(-1, attack, 0);
                 enemies[i].valid = false;
                 valid = false;
             }
@@ -71,6 +89,10 @@ void Entity::Update(float deltaTime, Entity* player, Entity* objects, int object
     else if (entityType == EntityType::PLANET) {
         rotation.z += 90 * deltaTime;
         rotation.y += 30 * deltaTime;
+    }
+    else if (entityType == EntityType::ENEMY) {
+        velocity.z = cos(glm::radians(rotation.y)) * -1.0f;
+        velocity.x = sin(glm::radians(rotation.y)) * -1.0f;
     }
 
     modelMatrix = glm::mat4(1.0f);

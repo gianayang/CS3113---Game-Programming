@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #endif
 
-#define LEVEL_LENGTH 2
+#define LEVEL_LENGTH 3
 #define GL_GLEXT_PROTOTYPES 1
 
 #include <vector>
@@ -20,6 +20,7 @@
 
 #include "StartPage.h"
 #include "Level1.h"
+#include "Level2.h"
 
 
 SDL_Window* displayWindow;
@@ -35,7 +36,7 @@ GLuint heartTextureID;
 
 GameState state;
 Scene* currentScene;
-Scene* sceneList[2];
+Scene* sceneList[3];
 
 GLuint bulletTextureID;
 Mesh* bulletMesh;
@@ -87,6 +88,7 @@ void Initialize() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     sceneList[0] = new StartPage();
     sceneList[1] = new Level1();
+    sceneList[2] = new Level2();
     SwitchToScene(sceneList[0]);
 
     bulletTextureID = Util::LoadTexture("textures.bmp");
@@ -114,10 +116,10 @@ void ProcessInput() {
                     bullet->textureID = bulletTextureID;
                     bullet->mesh = bulletMesh;
                     bullet->position = currentScene->state.player->position;
-
+                    bullet->velocity.z = cos(glm::radians(currentScene->state.player->rotation.y)) * -2.0f;
+                    bullet->velocity.x = sin(glm::radians(currentScene->state.player->rotation.y)) * -2.0f;
                     bullet->rotation = glm::vec3(0, -90, -90);
-                    bullet->velocity.x = currentScene->state.player->velocity.x;
-                    bullet->scale = glm::vec3(0.01f, 0.01f, 0.01f);
+                    bullet->scale = glm::vec3(0.001f, 0.001f, 0.001f);
                     bullet->entityType = EntityType::BULLET;
                     currentScene->state.bullets.push_back(bullet);
                     break;
@@ -159,7 +161,7 @@ void ProcessInput() {
                 switch (event.key.keysym.sym) {
                 case SDLK_RETURN:
                     gameStart = true;
-                    currentScene->state.nextScene = 1;
+                    currentScene->state.player->win = true;
                     break; // SDL_KEYDOWN
                 }
             }
@@ -206,30 +208,34 @@ void Render() {
     if (gameStart == false) {
         Util::DrawText(&program, fontTextureID, "Adventure of G", 0.4f, 0.01f, glm::vec3(-2.5f, 2.5f, 0));
         Util::DrawText(&program, fontTextureID, "Press Enter to Play!", 0.4f, 0.01f, glm::vec3(-3.5f, 1.0f, 0));
+        Util::DrawText(&program, fontTextureID, "Press Space Key to Shot!", 0.4f, 0.01f, glm::vec3(-4.5f, -1.0f, 0));
     }
     else {
         program.SetProjectionMatrix(projectionMatrix);
         currentScene->Render(&program);
         //Util::DrawText(&program, fontTextureID, "lives left: " + std::to_string(currentScene->state.player->lives), 0.2f, 0.01f, glm::vec3(2.0f, 3.50f, 0));
         if (currentScene->state.player->lives <= 0) {
-            Util::DrawText(&program, fontTextureID, "You Lost", 0.7f, 0.01f, glm::vec3(-2.5f, 2.0f, 0));
+            program.SetProjectionMatrix(uiProjectionMatrix);
+            program.SetViewMatrix(uiViewMatrix);
+            Util::DrawText(&program, fontTextureID, "You Lost", 1.0f, 0.05f, glm::vec3(-2.5f, 2.0f, 0));
         }
-        /*if (currentScene->state.player->win == true && currentScene->state.player->level == LEVEL_LENGTH - 1) {
-            Util::DrawText(&programUI, fontTextureID, "You Win", 0.7f, 0.01f, glm::vec3(-2.5f, 2.0f, 0));
+        if (currentScene->state.player->win == true && currentScene->state.player->level == LEVEL_LENGTH - 1) {
+            program.SetProjectionMatrix(uiProjectionMatrix);
+            program.SetViewMatrix(uiViewMatrix);
+            Util::DrawText(&program, fontTextureID, "You Win", 1.0, 0.05f, glm::vec3(-2.5f, 2.0f, 0));
         }
         else {
             currentScene->state.player->gameEnd = false;
         }
-        */
     }
     
 
     program.SetProjectionMatrix(uiProjectionMatrix);
     program.SetViewMatrix(uiViewMatrix);
 
-    Util::DrawText(&program, fontTextureID, "Lives: 3", 0.5, -0.3f, glm::vec3(-6, 3.2, 0));
+    Util::DrawText(&program, fontTextureID, "Lives: " + std::to_string(currentScene->state.player->lives), 0.5, -0.3f, glm::vec3(-6, 3.2, 0));
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < currentScene->state.player->lives; i++)
     {
         // These icons are small, so just move 0.5 to the right for each one.
         Util::DrawIcon(&program, heartTextureID, glm::vec3(5 + (i * 0.5f), 3.2, 0));
@@ -250,9 +256,11 @@ int main(int argc, char* argv[]) {
         if (!currentScene->state.player->gameEnd) {
             Update();
             int tempLives = currentScene->state.player->lives;
-            if (currentScene->state.nextScene >= 0) {
-                SwitchToScene(sceneList[currentScene->state.nextScene]);
-                currentScene->state.player->lives = tempLives;
+            if (currentScene->state.player->win == true) {
+                if (currentScene->state.player->level + 1 < LEVEL_LENGTH) {
+                    SwitchToScene(sceneList[currentScene->state.player->level + 1]);
+                    currentScene->state.player->lives = tempLives;
+                }
             }
             if (currentScene->state.player->gameEnd) {
                 sceneList[1] = new Level1();

@@ -20,7 +20,6 @@ struct GameState {
 	Entity* objects;
 	Entity* enemies;
 	std::vector<Entity*> bullets ;
-	int nextScene;
 };
 class Scene {
 public:

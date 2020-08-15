@@ -5,8 +5,6 @@
 
 
 void StartPage::Initialize() {
-    state.nextScene = -1;
-
     state.player = new Entity();
     state.player->position = glm::vec3(0, 0, 0);
     state.player->entityType = EntityType::PLAYER;
